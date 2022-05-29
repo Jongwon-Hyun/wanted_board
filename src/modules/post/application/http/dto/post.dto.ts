@@ -5,4 +5,4 @@ export interface PostDto {
     password: string,
 }
 
-type UpdatePostDto = Pick<PostDto, 'content' | 'title'>
+export type UpdatePostDto = Pick<PostDto, 'content' | 'title'>

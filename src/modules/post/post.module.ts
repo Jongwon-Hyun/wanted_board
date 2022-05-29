@@ -5,6 +5,8 @@ import { PostService } from './application/service/post.service';
 import { RegistPostCommand } from './application/service/command/regist-post.command';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './domain/entity/post.entity';
+import { DeletePostCommand } from './application/service/command/delete-post.command';
+import { UpdatePostCommand } from './application/service/command/update-post.command';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { Post } from './domain/entity/post.entity';
   providers: [
     PostService,
     RegistPostCommand,
+    DeletePostCommand,
+    UpdatePostCommand,
   ],
 })
 export class PostModule {}
