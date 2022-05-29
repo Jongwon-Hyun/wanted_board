@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/build
 
 # Logs
 logs
@@ -35,4 +36,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # local db data
-/dev-db-data
+/local-db-data
