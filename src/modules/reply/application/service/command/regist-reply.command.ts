@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { Reply } from "@reply/domain/entity/reply.entity";
@@ -25,7 +25,8 @@ export class RegistReplyCommand {
             return persistedReply;
         } catch (err) {
             await queryRunner.rollbackTransaction();
-            throw new InternalServerErrorException(`[fail persist reply] title: writer: ${reply.writer}}`);
+            Logger.error(`[fail persist reply] title: writer: ${reply.writer}`)
+            throw new InternalServerErrorException('fail persist reply');
         } finally {
             await queryRunner.release();
         }

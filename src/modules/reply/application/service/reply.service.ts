@@ -1,5 +1,5 @@
 import { Bcrypt } from "@common/util/bcrypt";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { PostUsecase } from "@post/domain/usecase/post.usecase";
@@ -18,6 +18,10 @@ export class ReplyService implements ReplyUsecase {
     constructor(
         private readonly registReplyCommand: RegistReplyCommand,
         private readonly fetchReplyListQuery: FetchReplyListQuery,
+        @InjectRepository(Reply)
+        private readonly replyRepository: Repository<Reply>,
+        @InjectRepository(Post)
+        private readonly postRepository: Repository<Post>,
     ) {}
 
     async regist(registReplyDto: RegistReplyDto): Promise<RegistReplyResponse> {
@@ -27,6 +31,13 @@ export class ReplyService implements ReplyUsecase {
             writer: registReplyDto.writer,
             is_child: registReplyDto.isChild,
         }
+
+        await this.checkPostID(registReplyDto.postID);
+
+        if (registReplyDto.isChild) {
+            await this.checkParent(registReplyDto.postID, registReplyDto.parentID);
+        }
+
         if (registReplyDto.isChild) {
             Object.assign(registReply, { parent_id : registReplyDto.parentID });
         }
@@ -70,5 +81,32 @@ export class ReplyService implements ReplyUsecase {
                 total_count: totalCount,
             }
         }
+    }
+
+    private async checkPostID(postID: number): Promise<void> {
+        if (!(await this.postRepository.findOne(postID))) {
+            throw new BadRequestException('not exsit post');
+        }
+    }
+
+    private async checkParent(postID: number, parentID: number): Promise<void> {
+        const parentCount = await this.replyRepository.createQueryBuilder('reply')
+            .where('reply.post_id = :postID', { postID })
+            .andWhere('reply.parent_id = :parentID', { parentID })
+            .getCount()
+
+            if (parentCount === 0) {
+                throw new BadRequestException('not exist parent');
+            }
+
+        const childCount = await this.replyRepository.createQueryBuilder('reply')
+            .where('reply.post_id = :postID', { postID })
+            .andWhere('reply.parent_id = :parentID', { parentID })
+            .andWhere('reply.is_child is true')
+            .getCount()
+
+            if (childCount > 0) {
+                throw new BadRequestException('must be only one re-reply');
+            }
     }
 }

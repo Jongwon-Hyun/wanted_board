@@ -17,7 +17,7 @@ export class FetchReplyListQuery {
             .orderBy('reply.created_at', 'DESC')            
             .skip(limit * (page - 1))
             .take(limit)
-            .where("reply.post_id = :postID", { postID: postID })
+            .where("reply.post_id = :postID", { postID })
             .andWhere('reply.is_child is false');
         
         if (!isChild) {

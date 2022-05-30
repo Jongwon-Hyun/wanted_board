@@ -24,7 +24,8 @@ export class RegistPostCommand {
             return persistedPost;
         } catch (err) {
             await queryRunner.rollbackTransaction();
-            throw new InternalServerErrorException(`[fail persist post] title: ${post.title} / writer: ${post.writer}}`);
+            Logger.error(`[fail persist post] title: ${post.title} / writer: ${post.writer}`)
+            throw new InternalServerErrorException('fail persist post');
         } finally {
             await queryRunner.release();
         }

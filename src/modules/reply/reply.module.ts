@@ -7,10 +7,13 @@ import { ReplyService } from './application/service/reply.service';
 import { RegistReplyCommand } from './application/service/command/regist-reply.command';
 import { FetchReplyListQuery } from './application/service/query/fetch-reply-list.query';
 import { ReplyController } from './application/http/controller/reply.controller';
+import { PostModule } from '@post/post.module';
+import { Post } from '@post/domain/entity/post.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Reply]),
+    TypeOrmModule.forFeature([Post]),
     CommonModule,
   ],
   controllers: [
