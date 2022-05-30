@@ -8,11 +8,13 @@ import { Post } from './domain/entity/post.entity';
 import { DeletePostCommand } from './application/service/command/delete-post.command';
 import { UpdatePostCommand } from './application/service/command/update-post.command';
 import { FetchPostListQuery } from './application/service/query/fetch-post-list.query';
+import { NoticeModule } from '@notice/notice.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post]),
     CommonModule,
+    NoticeModule,
   ],
   controllers: [
     PostController

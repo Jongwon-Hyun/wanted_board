@@ -1,6 +1,7 @@
 import { Bcrypt } from "@common/util/bcrypt";
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { NoticeScheduler } from "@notice/application/scheduler/notice.scheduler";
 import { Post } from "@post/domain/entity/post.entity";
 import { PostUsecase } from "@post/domain/usecase/post.usecase";
 import { Reply } from "@reply/domain/entity/reply.entity";
@@ -22,6 +23,7 @@ export class ReplyService implements ReplyUsecase {
         private readonly replyRepository: Repository<Reply>,
         @InjectRepository(Post)
         private readonly postRepository: Repository<Post>,
+        private readonly noticeScheduler: NoticeScheduler,
     ) {}
 
     async regist(registReplyDto: RegistReplyDto): Promise<RegistReplyResponse> {
@@ -43,6 +45,8 @@ export class ReplyService implements ReplyUsecase {
         }
 
         const reply = await this.registReplyCommand.regist(registReply);
+
+        this.noticeScheduler.registJob(reply.id, 'reply');
 
         return {
             id: reply.id,

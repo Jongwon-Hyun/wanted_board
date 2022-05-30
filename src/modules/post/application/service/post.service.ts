@@ -1,6 +1,7 @@
 import { Bcrypt } from "@common/util/bcrypt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { NoticeScheduler } from "@notice/application/scheduler/notice.scheduler";
 import { Post } from "@post/domain/entity/post.entity";
 import { PostUsecase } from "@post/domain/usecase/post.usecase";
 import { Repository } from "typeorm";
@@ -22,6 +23,7 @@ export class PostService implements PostUsecase {
         private readonly deletePostCommand: DeletePostCommand,
         private readonly updatePostCommand: UpdatePostCommand,
         private readonly fetchPostListQuery: FetchPostListQuery,
+        private readonly noticeScheduler: NoticeScheduler,
         private readonly bcrypt: Bcrypt,
     ) {}
 
@@ -32,6 +34,8 @@ export class PostService implements PostUsecase {
             writer: postDto.writer,
             password: await this.bcrypt.generate(postDto.password),      
         });
+
+        this.noticeScheduler.registJob(post.id, 'post');
 
         return {
             id: post.id,

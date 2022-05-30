@@ -9,12 +9,13 @@ import { FetchReplyListQuery } from './application/service/query/fetch-reply-lis
 import { ReplyController } from './application/http/controller/reply.controller';
 import { PostModule } from '@post/post.module';
 import { Post } from '@post/domain/entity/post.entity';
+import { NoticeModule } from '@notice/notice.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Reply]),
-    TypeOrmModule.forFeature([Post]),
+    TypeOrmModule.forFeature([Reply, Post]),
     CommonModule,
+    NoticeModule,
   ],
   controllers: [
     ReplyController

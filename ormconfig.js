@@ -11,6 +11,7 @@ module.exports = {
   entities: ["./dist/**/*.entity.js"],
   autoLoadEntities: true,
   migrations: ["./dist/migrations/*"],
+  seeds: ['./dist/db/seed/*'],
   cli: {
       migrationsDir: "./migrations",
   }
