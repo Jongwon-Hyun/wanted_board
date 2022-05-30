@@ -4,12 +4,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { PostUsecase } from "@post/domain/usecase/post.usecase";
 import { Repository } from "typeorm";
-import { PostDto, UpdatePostDto } from "../http/dto/post.dto";
+import { FetchPostListDto, PostDto, UpdatePostDto } from "../http/dto/post.dto";
 import { DeletePostResponse } from "../http/response/delete-post.response";
+import { FetchPostListResponse } from "../http/response/fetch-post-list.response";
 import { RegistPostResponse } from "../http/response/regist-post.response";
 import { DeletePostCommand } from "./command/delete-post.command";
 import { RegistPostCommand } from "./command/regist-post.command";
 import { UpdatePostCommand } from "./command/update-post.command";
+import { FetchPostListQuery } from "./query/fetch-post-list.query";
 
 @Injectable()
 export class PostService implements PostUsecase {
@@ -19,6 +21,7 @@ export class PostService implements PostUsecase {
         private readonly registPostCommand: RegistPostCommand,
         private readonly deletePostCommand: DeletePostCommand,
         private readonly updatePostCommand: UpdatePostCommand,
+        private readonly fetchPostListQuery: FetchPostListQuery,
         private readonly bcrypt: Bcrypt,
     ) {}
 
@@ -30,14 +33,18 @@ export class PostService implements PostUsecase {
             password: await this.bcrypt.generate(postDto.password),      
         });
 
-        return new RegistPostResponse(post.id, post.title, post.writer);
+        return {
+            id: post.id,
+            title: post.title,
+            writer: post.writer,
+        }
     }
 
     async delete(postID: number, password: string): Promise<DeletePostResponse> {
         await this.checkPassword(postID, password);
         await this.deletePostCommand.delete(postID);
 
-        return new DeletePostResponse(postID);
+        return { id: postID };
     }
 
     async update(postID: number, password: string, postDto: UpdatePostDto): Promise<void> {
@@ -48,6 +55,26 @@ export class PostService implements PostUsecase {
                 content: postDto.content,   
             }
         );
+    }
+
+    async getList(fetchPostListDto: FetchPostListDto): Promise<FetchPostListResponse> {
+        const page = fetchPostListDto.page ? fetchPostListDto.page : 1
+        const limit = fetchPostListDto.limit && fetchPostListDto.limit <= 500 ? fetchPostListDto.limit : 500;
+        const [postList, totalCount] = await this.fetchPostListQuery.getList(page, limit,
+            {
+                title: fetchPostListDto.filter?.title,
+                writer: fetchPostListDto.filter?.writer
+            }    
+        );
+
+        return {
+            posts: postList,
+            pagination: {
+                page,
+                limit,
+                totalCount
+            }
+        }
     }
 
     private async checkPassword(postID: number, password: string): Promise<void> {

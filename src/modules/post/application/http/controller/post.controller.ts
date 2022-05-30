@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Headers, Logger, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Headers, Logger, Param, Post, Put, Query } from "@nestjs/common";
 import { RegistPostRequest } from "@post/application/http/request/regist-post.request";
 import { PostService } from "@post/application/service/post.service";
 import { UpdatePostRequest } from "../request/update-post.request";
 import { DeletePostResponse } from "../response/delete-post.response";
+import { FetchPostListResponse } from "../response/fetch-post-list.response";
 import { RegistPostResponse } from "../response/regist-post.response";
 
 @Controller('posts')
@@ -56,5 +57,25 @@ export class PostController {
         content: request.content,
       }
     );
+  }
+
+  @Get()
+  async fetchPostList(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('title') title: string,
+    @Query('writer') writer: string
+    ): Promise<FetchPostListResponse> {
+
+    Logger.log('[request fetch post list]');
+
+    return await this.postService.getList({
+      filter: {
+        title,
+        writer,
+      },
+      page,
+      limit,
+    })
   }
 }

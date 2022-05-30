@@ -1,17 +1,19 @@
 import { BaseEntity } from '@common/entity/base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('posts')
 export class Post extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
+  @Index({ unique: false })
   @Column({ type: 'varchar', length: 50, nullable: false })
   title: string;
 
   @Column({ type: 'text', nullable: false })
   content: string;
 
+  @Index({ unique: false })
   @Column({ type: 'varchar', length: 20, nullable: false })
   writer: string;
 
