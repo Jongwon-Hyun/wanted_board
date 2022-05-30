@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength, NotContains } from 'class-validator';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 
 /**
  * 게시글 수정 요청

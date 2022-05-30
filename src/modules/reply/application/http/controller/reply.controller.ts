@@ -1,6 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Logger, Param, Post, Put, Query } from "@nestjs/common";
-import { RegistPostRequest } from "@post/application/http/request/regist-post.request";
-import { PostService } from "@post/application/service/post.service";
+import { Body, Controller, Get, Logger, Param, Post, Query } from "@nestjs/common";
 import { ReplyService } from "@reply/application/service/reply.service";
 import { RegistReplyRequest } from "../request/regist-reply.request";
 import { FetchReplyListResponse } from "../response/fetch-reply-list.response";

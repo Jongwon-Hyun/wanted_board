@@ -1,5 +1,5 @@
-import { FetchPostResponse } from "./fetch-post.response";
 import { Pagination } from "@common/response/pagination";
+import { FetchPostResponse } from "./fetch-post.response";
 
 /**
  * 게시글 목록 조회 응답

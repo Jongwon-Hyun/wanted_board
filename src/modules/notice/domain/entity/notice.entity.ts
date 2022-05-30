@@ -1,6 +1,5 @@
 import { BaseEntity } from '@common/entity/base.entity';
-import { Post } from '@post/domain/entity/post.entity';
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 /**
  * 알림 엔티티
