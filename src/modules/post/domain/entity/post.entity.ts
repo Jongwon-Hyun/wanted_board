@@ -1,5 +1,6 @@
 import { BaseEntity } from '@common/entity/base.entity';
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Reply } from '@reply/domain/entity/reply.entity';
+import { Column, Entity, Index, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('posts')
 export class Post extends BaseEntity {
@@ -19,4 +20,8 @@ export class Post extends BaseEntity {
 
   @Column({ type: 'varchar', length: 72, nullable: false })
   password: string;
+
+  @OneToMany(() => Reply, reply => reply.id)
+  @JoinColumn({ name: 'reply_id' })
+  reply: Array<Reply>;
 }

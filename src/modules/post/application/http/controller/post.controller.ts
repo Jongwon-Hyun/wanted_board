@@ -59,6 +59,9 @@ export class PostController {
     );
   }
 
+  // 게시글 목록을 가져올 때 댓글은 가져오지 않음
+  // 게시글 하나를 가져올 때 댓글 가져오기 -> 게시글 리스트 로딩이 더 빠르다는 장점
+  // 게시글 목록을 가져올 때 댓글을 가져오기 -> 클라이언트에 store 시켜 놓기 때문에 게시글 하나 가져올 때 빠름
   @Get()
   async fetchPostList(
     @Query('page') page: number,

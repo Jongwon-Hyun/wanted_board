@@ -6,7 +6,7 @@ export class RegistPostRequest {
     title: string;
 
     @IsNotEmpty()
-    @MaxLength(2000)
+    @MaxLength(10000)
     content: string;
 
     @IsNotEmpty()

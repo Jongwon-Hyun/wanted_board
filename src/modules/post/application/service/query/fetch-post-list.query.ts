@@ -15,9 +15,10 @@ export class FetchPostListQuery {
         const query = this.postRepository
             .createQueryBuilder('post')
             .select([
-                'post.id', 'post.title', 'post.content', 'post.writer'
+                'post.id', 'post.title', 'post.content', 'post.writer', 
+                'post.created_at', 'post.updated_at',
             ])
-            .orderBy('created_at', 'DESC')            
+            .orderBy('post.created_at', 'DESC')            
             .skip(limit * (page - 1))
             .take(limit);
         
