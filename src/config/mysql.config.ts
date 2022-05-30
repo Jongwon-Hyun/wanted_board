@@ -1,5 +1,8 @@
 import { registerAs } from '@nestjs/config';
 
+/**
+ * MySQL 설정값을 nest config 세팅
+ */
 export default registerAs('mysql', () => {
   return {
     type: 'mysql',

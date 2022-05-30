@@ -14,6 +14,9 @@ import { RegistPostCommand } from "./command/regist-post.command";
 import { UpdatePostCommand } from "./command/update-post.command";
 import { FetchPostListQuery } from "./query/fetch-post-list.query";
 
+/**
+ * 게시글 서비스
+ */
 @Injectable()
 export class PostService implements PostUsecase {
     constructor(
@@ -27,14 +30,20 @@ export class PostService implements PostUsecase {
         private readonly bcrypt: Bcrypt,
     ) {}
 
-    async regist(postDto: RegistPostDto): Promise<RegistPostResponse> {
+    /**
+     * 게시글 등록
+     * @param registPostDto 게시글 등록 DTO
+     * @returns 게시글 등록 응답
+     */    
+    async regist(registPostDto: RegistPostDto): Promise<RegistPostResponse> {
         const post = await this.registPostCommand.regist({
-            title: postDto.title,
-            content: postDto.content,
-            writer: postDto.writer,
-            password: await this.bcrypt.generate(postDto.password),      
+            title: registPostDto.title,
+            content: registPostDto.content,
+            writer: registPostDto.writer,
+            password: await this.bcrypt.generate(registPostDto.password),      
         });
 
+        // 알람 큐에 등록
         this.noticeScheduler.registJob(post.id, 'post');
 
         return {
@@ -45,6 +54,12 @@ export class PostService implements PostUsecase {
         }
     }
 
+    /**
+     * 게시글 삭제
+     * @param postID 게시글 ID
+     * @param password 패스워드
+     * @returns 게시글 삭제 응답
+     */
     async delete(postID: number, password: string): Promise<DeletePostResponse> {
         await this.checkPassword(postID, password);
         await this.deletePostCommand.delete(postID);
@@ -52,18 +67,31 @@ export class PostService implements PostUsecase {
         return { id: postID };
     }
 
-    async update(postID: number, password: string, postDto: UpdatePostDto): Promise<void> {
+    /**
+     * 게시글 수정
+     * @param postID 게시글 ID
+     * @param password 패스워드
+     * @param updatePostDto 게시글 수정 DTO
+     */
+    async update(postID: number, password: string, updatePostDto: UpdatePostDto): Promise<void> {
         await this.checkPassword(postID, password);
         await this.updatePostCommand.update(postID, 
             {
-                title: postDto.title,
-                content: postDto.content,   
+                title: updatePostDto.title,
+                content: updatePostDto.content,   
             }
         );
     }
 
+    /**
+     * 게시글 목록 조회
+     * @param fetchPostListDto 게시글 목록 조회 DTO
+     * @returns 게시글 목록
+     */
     async getList(fetchPostListDto: FetchPostListDto): Promise<FetchPostListResponse> {
+        // 요청정보에 페이지가 없는 경우 1페이지로 세팅
         const page = fetchPostListDto.page ? fetchPostListDto.page : 1
+        // 요청정보의 게시글 개수가 없거나 500개 이상일 경우, 500개로 세팅
         const limit = fetchPostListDto.limit && fetchPostListDto.limit <= 500 ? fetchPostListDto.limit : 500;
         const [postList, totalCount] = await this.fetchPostListQuery.getList(page, limit,
             {
@@ -83,6 +111,11 @@ export class PostService implements PostUsecase {
         }
     }
 
+    /**
+     * 패스워드 검증
+     * @param postID 게시글 ID
+     * @param password 패스워드
+     */
     private async checkPassword(postID: number, password: string): Promise<void> {
         const post = await this.postRepository.findOne(postID);
         if (!(await this.bcrypt.isMatch(password, post.password))) {

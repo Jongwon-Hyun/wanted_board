@@ -6,12 +6,20 @@ import { RegistReplyRequest } from "../request/regist-reply.request";
 import { FetchReplyListResponse } from "../response/fetch-reply-list.response";
 import { RegistReplyResponse } from "../response/regist-reply.response";
 
+/**
+ * 댓글 컨트롤러
+ */
 @Controller('replies')
 export class ReplyController {
   constructor(
     private readonly replyService: ReplyService,
   ) {}
 
+  /**
+   * 댓글 등록
+   * @param request 요청 객체
+   * @returns 응답 객체
+   */
   @Post()
   async registReply(
     @Body() request: RegistReplyRequest
@@ -30,6 +38,14 @@ export class ReplyController {
     );
   }
 
+  /**
+   * 댓글 목록 조회
+   * @param params 요청 파라미터, 게시글 ID
+   * @param page 페이지
+   * @param limit 댓글 개수
+   * @param isChild 대댓글 플래그
+   * @returns 응답 객체
+   */
   @Get(':post_id')
   async fetchReplyList(
     @Param() params,

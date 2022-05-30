@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { Connection, Repository } from "typeorm";
 
+/**
+ * 게시글 등록
+ */
 @Injectable()
 export class RegistPostCommand {
     constructor(
@@ -11,6 +14,11 @@ export class RegistPostCommand {
         private readonly connection: Connection,
     ) {}
 
+    /**
+     * 게시글 등록
+     * @param post 게시글
+     * @returns 등록한 게시글
+     */
     async regist(post: Partial<Post>): Promise<Post> {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect();

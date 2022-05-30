@@ -1,6 +1,9 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger, BadRequestException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+/**
+ * 에러 핸들링
+ */
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -11,6 +14,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   
     let message = exception.message;
     if (exception instanceof BadRequestException) {
+      // 리퀘스트 필드값 검증을 위한 class-validator 의 메시지를 획득하기 위해 분기처리
       const errRes = exception.getResponse() as {
         message: string;
       }

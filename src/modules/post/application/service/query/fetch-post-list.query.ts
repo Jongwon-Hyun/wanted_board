@@ -4,6 +4,9 @@ import { Post } from "@post/domain/entity/post.entity";
 import { Repository } from "typeorm";
 import { FetchPostListFilter } from "./fetch-post-list-filter";
 
+/**
+ * 게시글 목록 조회
+ */
 @Injectable()
 export class FetchPostListQuery {
     constructor(
@@ -11,6 +14,13 @@ export class FetchPostListQuery {
         private readonly postRepository: Repository<Post>,
     ) {}
 
+    /**
+     * 게시글 목록 조회
+     * @param page 페이지
+     * @param limit 게시글 개수
+     * @param filter 검색 조건
+     * @returns 조회된 게시글, 게시글 총 개수
+     */
     async getList(page: number, limit: number, filter: FetchPostListFilter): Promise<[Array<Post>, number]> {
         const query = this.postRepository
             .createQueryBuilder('post')

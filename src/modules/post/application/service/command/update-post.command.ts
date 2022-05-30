@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { Connection, Repository } from "typeorm";
 
+/**
+ * 게시글 수정
+ */
 @Injectable()
 export class UpdatePostCommand {
     constructor(
@@ -11,6 +14,11 @@ export class UpdatePostCommand {
         private readonly connection: Connection,
     ) {}
 
+    /**
+     * 게시글 수정
+     * @param postID 게시글 ID
+     * @param post 게시글
+     */
     async update(postID: number, post: Partial<Post>): Promise<void> {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect();

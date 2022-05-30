@@ -14,6 +14,9 @@ import { RegistReplyResponse } from "../http/response/regist-reply.response";
 import { RegistReplyCommand } from "./command/regist-reply.command";
 import { FetchReplyListQuery } from "./query/fetch-reply-list.query";
 
+/**
+ * 댓글 서비스
+ */
 @Injectable()
 export class ReplyService implements ReplyUsecase {
     constructor(
@@ -26,6 +29,11 @@ export class ReplyService implements ReplyUsecase {
         private readonly noticeScheduler: NoticeScheduler,
     ) {}
 
+    /**
+     * 댓글 등록
+     * @param registReplyDto 댓들 등록 DTO
+     * @returns 댓글 등록 응답
+     */
     async regist(registReplyDto: RegistReplyDto): Promise<RegistReplyResponse> {
         const registReply = {
             post_id: registReplyDto.postID,
@@ -34,18 +42,22 @@ export class ReplyService implements ReplyUsecase {
             is_child: registReplyDto.isChild,
         }
 
+        // 댓글이 달리는 게시글이 존재하는지 검증
         await this.checkPostID(registReplyDto.postID);
 
         if (registReplyDto.isChild) {
+            // 대댓글의 경우, 대댓글이 달리는 부모 댓글이 존재하는지 검증
             await this.checkParent(registReplyDto.postID, registReplyDto.parentID);
         }
 
         if (registReplyDto.isChild) {
+            // 대댓글의 경우 대댓글이 달리는 부모 댓글 ID 를 세팅
             Object.assign(registReply, { parent_id : registReplyDto.parentID });
         }
 
         const reply = await this.registReplyCommand.regist(registReply);
 
+        // 알림 큐에 등록
         this.noticeScheduler.registJob(reply.id, 'reply');
 
         return {
@@ -58,8 +70,15 @@ export class ReplyService implements ReplyUsecase {
         }
     }
 
+    /**
+     * 댓글 목록 조회
+     * @param fetchReplyListDto 댓글 목록 조회 DTO
+     * @returns 댓글 목록 조회 응답
+     */
     async getList(fetchReplyListDto: FetchReplyListDto): Promise<FetchReplyListResponse> {
+        // 요청 정보에 페이지가 없을 경우 1페이지로 세팅
         const page = fetchReplyListDto.page ? fetchReplyListDto.page : 1
+        // 요청정보의 댓글 개수가 없거나 500개 이상의 경우, 500개로 세팅
         const limit = fetchReplyListDto.limit && fetchReplyListDto.limit <= 500 ? fetchReplyListDto.limit : 500;
         const [replyList, totalCount] = await this.fetchReplyListQuery.getList(
             fetchReplyListDto.postID, fetchReplyListDto.isChild, page, limit,
@@ -87,18 +106,31 @@ export class ReplyService implements ReplyUsecase {
         }
     }
 
+    /**
+     * 게시글 ID 검증
+     * 댓글이 달리는 게시글이 존재해야 한다!!
+     * @param postID 게시글 ID
+     */
     private async checkPostID(postID: number): Promise<void> {
         if (!(await this.postRepository.findOne(postID))) {
             throw new BadRequestException('not exsit post');
         }
     }
 
+    /**
+     * 부모 댓글 검증
+     * 대댓글이 달리는 부모 댓글이 존재해야 한다!!
+     * 댓글에는 대댓글이 하나만 달릴 수 있다!!
+     * @param postID 게시글 ID
+     * @param parentID 부모 댓글 ID
+     */
     private async checkParent(postID: number, parentID: number): Promise<void> {
         const parentCount = await this.replyRepository.createQueryBuilder('reply')
             .where('reply.post_id = :postID', { postID })
             .andWhere('reply.parent_id = :parentID', { parentID })
             .getCount()
 
+            // 부모 댓글이 존재하지 않을 경우
             if (parentCount === 0) {
                 throw new BadRequestException('not exist parent');
             }
@@ -109,6 +141,7 @@ export class ReplyService implements ReplyUsecase {
             .andWhere('reply.is_child is true')
             .getCount()
 
+            // 부모 댓글에 대댓글이 달려 있는 경우
             if (childCount > 0) {
                 throw new BadRequestException('must be only one re-reply');
             }

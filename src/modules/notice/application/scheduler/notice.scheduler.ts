@@ -8,6 +8,9 @@ import { Reply } from "@reply/domain/entity/reply.entity";
 import { Connection, Repository } from "typeorm";
 import { NoticeService } from "../service/notice.service";
 
+/**
+ * 알림 스케줄러
+ */
 @Injectable()
 export class NoticeScheduler {
     
@@ -26,6 +29,9 @@ export class NoticeScheduler {
 
     // 5분 마다 실행, 리얼타임을 위해서는 상당한 서버 리소스가 필요
     // 서비스 규모가 커지고 서버 리소스를 더 이상 감당하기 힘들 때는 카프카 등을 이용한 비동기 메시지 큐 서버를 구축해야 함 
+    /**
+     * 알림 발송
+     */
     @Cron('* */5 * * * *')
     async notice() {
         const jobList = await this.noticeQueueRepositoy.find();
@@ -78,6 +84,11 @@ export class NoticeScheduler {
         }
     }
 
+    /**
+     * 알림 발송을 위한 큐 데이터베이스에 작업 메타 데이터를 영속화
+     * @param jobId 작업 ID
+     * @param jobType 작업 대상
+     */
     async registJob(jobId: number, jobType: 'post' | 'reply') {
         await this.noticeQueueRepositoy.save({
             job_id: jobId,

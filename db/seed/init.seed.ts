@@ -5,6 +5,7 @@ import { Reply } from '../../src/modules/reply/domain/entity/reply.entity';
 import { Notice } from '../../src/modules/notice/domain/entity/notice.entity';
 import { NoticeQueue } from '../../src/modules/notice/domain/entity/notice-queue.entity';
 
+// 개발환경용 데이터 시드
 export default class InitSeeding implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await connection.createQueryBuilder()

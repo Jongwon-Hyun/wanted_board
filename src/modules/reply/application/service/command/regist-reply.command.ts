@@ -4,6 +4,9 @@ import { Post } from "@post/domain/entity/post.entity";
 import { Reply } from "@reply/domain/entity/reply.entity";
 import { Connection, Repository } from "typeorm";
 
+/**
+ * 댓글 등록
+ */
 @Injectable()
 export class RegistReplyCommand {
     constructor(
@@ -12,6 +15,11 @@ export class RegistReplyCommand {
         private readonly connection: Connection,
     ) {}
 
+    /**
+     * 댓글 등록
+     * @param reply 댓글
+     * @returns 등록한 댓글
+     */
     async regist(reply: Partial<Reply>): Promise<Reply> {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect();

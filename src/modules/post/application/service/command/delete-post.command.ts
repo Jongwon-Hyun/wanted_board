@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "@post/domain/entity/post.entity";
 import { Connection, Repository } from "typeorm";
 
+/**
+ * 게시글 삭제
+ */
 @Injectable()
 export class DeletePostCommand {
     constructor(
@@ -11,6 +14,11 @@ export class DeletePostCommand {
         private readonly connection: Connection,
     ) {}
 
+    /**
+     * 게시글 삭제
+     * @param postID 게시글 ID
+     * @returns 삭제한 게시글 ID
+     */
     async delete(postID: number): Promise<number> {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect();
