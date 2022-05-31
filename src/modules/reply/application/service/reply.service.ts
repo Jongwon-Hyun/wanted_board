@@ -123,7 +123,7 @@ export class ReplyService implements ReplyUsecase {
     private async checkParent(postID: number, parentID: number): Promise<void> {
         const parentCount = await this.replyRepository.createQueryBuilder('reply')
             .where('reply.post_id = :postID', { postID })
-            .andWhere('reply.parent_id = :parentID', { parentID })
+            .andWhere('reply.id = :parentID', { parentID })
             .getCount()
 
             // 부모 댓글이 존재하지 않을 경우
