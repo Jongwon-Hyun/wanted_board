@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             useFactory: (configService: ConfigService) => {
                 // nest js config 에서 설정값 획득
                 const config = configService.get('mysql');
+                console.log(config);
                 return {
                     ...config,
                     synchronize: false,

@@ -22,6 +22,7 @@
   `npm run build`
 - DB 테이블 생성  
  `npm run migration:run`
+  - DB 커넥션에 실패할 경우 도커 이미지가 올라가고 mysql 서버를 기동할 때까지 잠시 기다렸다가 다시 시도(5분 정도면 충분?) 
 - DB 초기 데이터 생성  
  `npm run seed:config`  
  `npm run seed:run`
@@ -50,7 +51,8 @@
 - DB 데이터 생성  
 `npm run seed:run`  
   - 테이블 초기화, DB 데이터 생성 초기화 설정 후 실행 할 것
-
+- MySQL DB 중지  
+`npm run docker:down`
 ---
 
 ## 🔎　API 테스트
