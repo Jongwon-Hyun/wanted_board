@@ -38,11 +38,6 @@ export interface FetchReplyListDto {
     postID: number;
 
     /**
-     * 대댓글 플래그
-     */
-    isChild: boolean;
-
-    /**
      * 페이지
      */
     page: number;

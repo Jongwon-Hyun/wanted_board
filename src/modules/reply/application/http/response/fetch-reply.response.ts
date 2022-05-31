@@ -18,11 +18,6 @@ export interface FetchReplyResponse {
     readonly content: string;
 
     /**
-     * 대댓글 플래그
-     */
-    readonly is_child: boolean;
-
-    /**
      * 생성일자
      */
     readonly created_at: Date;

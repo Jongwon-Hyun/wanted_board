@@ -7,6 +7,8 @@ import { HttpExceptionFilter } from './error/http-exception-filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   // API 전체에 적용되는 URL prefix
   app.setGlobalPrefix('v1/api');
 

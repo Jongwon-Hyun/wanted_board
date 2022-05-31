@@ -78,14 +78,13 @@ export class ReplyService implements ReplyUsecase {
         // 요청정보의 댓글 개수가 없거나 500개 이상의 경우, 500개로 세팅
         const limit = fetchReplyListDto.limit && fetchReplyListDto.limit <= 500 ? fetchReplyListDto.limit : 500;
         const [replyList, totalCount] = await this.fetchReplyListQuery.getList(
-            fetchReplyListDto.postID, fetchReplyListDto.isChild, page, limit,
+            fetchReplyListDto.postID, page, limit,
         );
 
         const responseReplyList = replyList.map(reply => ({
             id: reply.id,
             post_id: reply.post_id,
             content: reply.content,
-            is_child: reply.is_child,
             created_at: reply.created_at,
             child_reply: {
                 id: reply.child?.id,

@@ -41,7 +41,6 @@ export class ReplyController {
    * @param params 요청 파라미터, 게시글 ID
    * @param page 페이지
    * @param limit 댓글 개수
-   * @param isChild 대댓글 플래그
    * @returns 응답 객체
    */
   @Get(':post_id')
@@ -49,14 +48,12 @@ export class ReplyController {
     @Param() params,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('is_child') isChild: boolean,
     ): Promise<FetchReplyListResponse> {
 
-    Logger.log('[request fetch reply list]');
+      Logger.log('[request fetch reply list]');
 
     return await this.replyService.getList({
       postID: params.post_id,
-      isChild,
       page,
       limit,
     })

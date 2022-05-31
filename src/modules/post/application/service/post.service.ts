@@ -1,5 +1,5 @@
 import { Bcrypt } from "@common/util/bcrypt";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NoticeScheduler } from "@notice/application/scheduler/notice.scheduler";
 import { Post } from "@post/domain/entity/post.entity";
@@ -61,6 +61,7 @@ export class PostService implements PostUsecase {
      * @returns 게시글 삭제 응답
      */
     async delete(postID: number, password: string): Promise<DeletePostResponse> {
+        await this.checkPostID(postID);
         await this.checkPassword(postID, password);
         await this.deletePostCommand.delete(postID);
 
@@ -74,6 +75,7 @@ export class PostService implements PostUsecase {
      * @param updatePostDto 게시글 수정 DTO
      */
     async update(postID: number, password: string, updatePostDto: UpdatePostDto): Promise<void> {
+        await this.checkPostID(postID);
         await this.checkPassword(postID, password);
         await this.updatePostCommand.update(postID, 
             {
@@ -100,7 +102,6 @@ export class PostService implements PostUsecase {
             }    
         );
 
-        
         return {
             posts: postList,
             pagination: {
@@ -112,7 +113,19 @@ export class PostService implements PostUsecase {
     }
 
     /**
+     * 게시글 ID 검증
+     * 게시글 수정, 삭제의 경우 게시글이 존재해야 한다!!
+     * @param postID 게시글 ID
+     */
+     private async checkPostID(postID: number): Promise<void> {
+        if (!(await this.postRepository.findOne(postID))) {
+            throw new BadRequestException('not exsit post');
+        }
+    }
+
+    /**
      * 패스워드 검증
+     * 게시글 수정, 삭제의 경우 패스워드가 일치해야 한다!!
      * @param postID 게시글 ID
      * @param password 패스워드
      */
