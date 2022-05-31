@@ -51,7 +51,9 @@
 `npm run seed:run`  
   - 테이블 초기화, DB 데이터 생성 초기화 설정 후 실행 할 것
 
-## API 테스트
+---
+
+## 🔎　API 테스트
 - vscode 의 익스텐션 `Swagger Viewer` 를 인스톨
 - `doc/wanted_board.swagger.yaml` 파일을 vscode 명령어 `Preview Swagger`로 실행
 - Swagger Viewer 의 디폴트 브라우저를 크롬으로 설정하는 것을 권장
